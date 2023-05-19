@@ -29,6 +29,7 @@ async function run() {
 
 
     const productCollection=client.db('kitsForKids').collection('products');
+    const addedToyCollection=client.db('kitsForKids').collection('addedToy');
 
     app.get('/products',async(req,res)=>{
       const cursor=productCollection.find();
@@ -42,6 +43,18 @@ async function run() {
       const result=await productCollection.findOne(query)
       res.send(result)
     })
+
+
+    //Add a toy
+
+    app.post('/alltoy',async(req,res)=>{
+      const added=req.body
+      console.log(added)
+      const result = await addedToyCollection.insertOne(added);
+      res.send(result)
+    })
+
+    //All Toy
 
 
     // Send a ping to confirm a successful connection
