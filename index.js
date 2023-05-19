@@ -47,7 +47,7 @@ async function run() {
 
     //Add a toy
 
-    app.post('/alltoy',async(req,res)=>{
+    app.post('/addedToy',async(req,res)=>{
       const added=req.body
       console.log(added)
       const result = await addedToyCollection.insertOne(added);
@@ -55,6 +55,18 @@ async function run() {
     })
 
     //All Toy
+
+    app.get('/addedToy',async(req,res)=>{
+      const result= await addedToyCollection.find().toArray();
+      res.send(result)
+    })
+
+    app.get('/addedToy/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id : new ObjectId(id)}
+      const result=await addedToyCollection.findOne(query)
+      res.send(result)
+    })
 
 
     // Send a ping to confirm a successful connection
