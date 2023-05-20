@@ -75,14 +75,21 @@ async function run() {
     //for my toy section
     app.get('/addedToy', async (req, res) => {
       let query = {};
-      console.log(query)
-      if (req.query.user_email) {
-        query = { email: req.query.user_email };
+      console.log(req.query.email); // Log the email parameter to check if it is correctly received
+      if (req.query.email) {
+        query = { email: req.query.email };
       }
-      const result = await addedToyCollection.find(query).toArray();
-      // console.log(addedToyCollection)
-      res.send(result);
+      try {
+        const result = await addedToyCollection.find(query).toArray();
+        console.log(result); // Log the result to the terminal
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
     });
+    
+
 
     //Delete a toy from my toy
     app.delete('/addedToy/:id', async (req, res) => {
