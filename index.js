@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+     client.connect();
 
 
     const productCollection = client.db('kitsForKids').collection('products');
@@ -73,20 +73,10 @@ async function run() {
 
 
     //for my toy section
-    app.get('/addedToy', async (req, res) => {
-      let query = {};
-      console.log(req.query.email); // Log the email parameter to check if it is correctly received
-      if (req.query.email) {
-        query = { email: req.query.email };
-      }
-      try {
-        const result = await addedToyCollection.find(query).toArray();
-        console.log(result); // Log the result to the terminal
-        res.send(result);
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-      }
+    app.get('/addedToy/:user_email', async (req, res) => {
+      console.log(req.params.id);
+      const result = await addedToyCollection.find({ user_email: req.params.user_email }).toArray();
+      res.send(result);
     });
     
 
@@ -105,22 +95,26 @@ async function run() {
 
     // Update a toy
 
-    app.patch('/addedToy/:id',async(req,res)=>{
-
-      const id=req.params.id;
-      const updateToy=req.body;
-      const filter={_id:new ObjectId(id)}
-      console.log(updateToy)
-      const updateDoc={
-          $set :{
-              status:updateToy.status
-          }
+    app.put('/addedToy/:id', async (req, res) => {
+      const id = req.params.id;
+      const updateToy = req.body;
+      const filter = { _id: new ObjectId(id) };
+      console.log(updateToy);
+      const updateDoc = {
+        $set: {
+          status: updateToy.status,
+        },
+      };
+    
+      try {
+        const result = await addedToyCollection.updateOne(filter, updateDoc);
+        res.send(result); // Instead of sending the result, you can send a success message or the updated document if needed.
+      } catch (error) {
+        console.log(error);
+        res.status(500).send('Failed to update toy');
       }
-
-      const result = await addedToyCollection.updateOne(filter,updateDoc)
-      res.send(result)
-
-  })
+    });
+    
     
 
     // Send a ping to confirm a successful connection
