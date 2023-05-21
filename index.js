@@ -14,7 +14,7 @@ app.use(cors());
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.Secret_Key}@cluster0.ey6jdyf.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const  client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-     client.connect();
+     await client.connect();
 
 
     const productCollection = client.db('kitsForKids').collection('products');
@@ -98,12 +98,15 @@ async function run() {
     app.put('/addedToy/:id', async (req, res) => {
       const id = req.params.id;
       const updateToy = req.body;
+      console.log(req.body)
       const filter = { _id: new ObjectId(id) };
       console.log(updateToy);
       const updateDoc = {
         $set: {
-          status: updateToy.status,
-        },
+          price: updateToy.price,
+          available_quantity: updateToy.available_quantity,
+          description: updateToy.description,
+      },
       };
     
       try {
